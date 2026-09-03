@@ -1,0 +1,4 @@
+trade_no,symbol,direction,signal_type,confluence_score,entry_time,entry_price,stop_loss,take_profit,lot_size,exit_time,exit_price,exit_reason,pnl_usd,pnl_r,commission
+1,EURUSD,bullish,fvg_retest,75.0,2026-07-10 16:45:00+00:00,1.14272,1.14159,1.14391,0.88,2026-07-10 17:30:00+00:00,1.14159,sl_hit,-99.43999999998708,-1.0,6.16
+2,EURUSD,bullish,fvg_retest,75.0,2026-07-10 18:00:00+00:00,1.14239,1.14158,1.14308,1.22,2026-07-10 18:15:00+00:00,1.14308,tp_hit,84.18000000000968,0.8518518518519737,8.54
+3,EURUSD,bullish,fvg_retest,75.0,2026-07-10 19:15:00+00:00,1.14411,1.14323,1.14493,1.13,2026-07-10 19:45:00+00:00,1.14323,sl_hit,-99.43999999999907,-1.0,7.909999999999999

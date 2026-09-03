@@ -1,0 +1,113 @@
+.stats-panel-container {
+  background: rgba(30, 30, 40, 0.7);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 24px;
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+  color: #fff;
+}
+
+.sp-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.sp-header h2 {
+  font-size: 1.1rem;
+  margin: 0;
+  font-weight: 600;
+  color: #e0e0e0;
+}
+
+.criteria-indicator {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  padding: 6px 12px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.indicator-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.status-passed .indicator-dot, .status-on-track .indicator-dot {
+  background: #4caf50;
+  box-shadow: 0 0 8px #4caf50;
+}
+.status-passed, .status-on-track { color: #4caf50; }
+
+.status-at-risk .indicator-dot {
+  background: #ff9800;
+  box-shadow: 0 0 8px #ff9800;
+}
+.status-at-risk { color: #ff9800; }
+
+.status-failed .indicator-dot {
+  background: #f44336;
+  box-shadow: 0 0 8px #f44336;
+}
+.status-failed { color: #f44336; }
+
+.status-pending .indicator-dot {
+  background: #8c8c9e;
+}
+.status-pending { color: #8c8c9e; }
+
+.sp-content {
+  display: flex;
+  gap: 20px;
+}
+
+.stat-group {
+  flex: 1;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+  padding: 15px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.stat-group h3 {
+  margin: 0 0 15px 0;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  color: #8c8c9e;
+  letter-spacing: 1px;
+}
+
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 15px;
+}
+
+.stat-box {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.stat-label {
+  font-size: 0.8rem;
+  color: #a0a0b0;
+}
+
+.stat-value {
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+
+.text-success { color: #4caf50; }
+.text-danger { color: #ff4d4f; }

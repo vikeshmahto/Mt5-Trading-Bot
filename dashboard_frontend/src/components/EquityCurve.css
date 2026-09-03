@@ -1,0 +1,51 @@
+.equity-curve-container {
+  background: rgba(30, 30, 40, 0.7);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 24px;
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+  color: #fff;
+}
+
+.ec-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.ec-header h2 {
+  font-size: 1.1rem;
+  margin: 0;
+  font-weight: 600;
+  color: #e0e0e0;
+}
+
+.ec-stats {
+  display: flex;
+  gap: 20px;
+  font-size: 0.95rem;
+  color: #a0a0b0;
+}
+
+.ec-stats strong {
+  color: #fff;
+  margin-left: 5px;
+  font-size: 1.05rem;
+}
+
+.text-danger {
+  color: #ff4d4f !important;
+}
+
+.text-success {
+  color: #4caf50 !important;
+}
+
+.ec-chart {
+  width: 100%;
+}
