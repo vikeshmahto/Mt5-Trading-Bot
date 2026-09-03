@@ -188,12 +188,18 @@ async def get_status():
         if last_sig:
             last_sig['timestamp'] = str(last_sig['timestamp'])
             
-    """Returns basic configuration and status."""
-    return {
-        "paper_start_date": settings.paper_start_date,
-        "environment": "paper" if settings.is_paper else "live",
-        "active_symbols": settings.active_symbols
-    }
+        start_date = str(trades_df.iloc[0]['min_time']) if not trades_df.empty and pd.notna(trades_df.iloc[0]['min_time']) else None
+        
+        return {
+            "heartbeat": hb,
+            "last_signal": last_sig,
+            "paper_start_date": start_date or settings.paper_start_date,
+            "environment": "paper" if settings.is_paper else "live",
+            "active_symbols": settings.active_symbols,
+            "active_instruments": hb['extra_info'].get('active_symbols', []) if hb and hb.get('extra_info') else []
+        }
+    except Exception as e:
+        return {"error": str(e)}
 
 # Mount the static frontend at the root (must be done last to not override API routes)
 frontend_dist_path = Path(__file__).resolve().parent.parent / "dashboard_frontend" / "dist"

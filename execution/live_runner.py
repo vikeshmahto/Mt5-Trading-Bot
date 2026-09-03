@@ -32,8 +32,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from config.settings import settings
 from core.logger import get_logger
-from data.fetcher import fetch_multi
-from data.mt5_client import MT5Client
+from data.mt5_client import MT5Client, MT5ConnectionError
 from execution.order_manager import OrderManager
 from execution.risk_manager import RiskManager
 from signals.generator import generate_signal
@@ -46,7 +45,7 @@ from storage.repository import (
     update_heartbeat,
 )
 
-log = get_logger(__name__, level=settings.log_level)
+log = get_logger("live_runner", log_file="logs/live_runner.log", level=settings.log_level)
 
 def _push_event(event_type: str, data: dict) -> None:
     """Fire-and-forget event push to dashboard backend."""
@@ -83,6 +82,8 @@ class LiveRunner:
 
         # Track processed bar timestamps to avoid duplicate entries on the same bar
         self._last_processed_m1: dict[str, datetime] = {}
+        
+        self.mt5_client = MT5Client()
 
     def start(self) -> None:
         """Initialize connections and enter the live loop."""
@@ -100,8 +101,11 @@ class LiveRunner:
             log.error(f"Database initialization failed: {e}")
 
         # 2. Main Execution Loop
-        with MT5Client():
+        try:
+            self.mt5_client.connect()
             self._main_loop()
+        finally:
+            self.mt5_client.disconnect()
 
     def stop(self) -> None:
         """Signal the loop to stop."""
@@ -115,6 +119,16 @@ class LiveRunner:
         while self.is_running:
             try:
                 loop_start = time.time()
+                
+                # Check MT5 connection and reconnect if necessary
+                if not self.mt5_client.is_connected():
+                    log.warning("MT5 connection lost! Attempting to reconnect...")
+                    try:
+                        self.mt5_client.connect()
+                    except MT5ConnectionError as e:
+                        log.error(f"Reconnection failed: {e}. Will retry next cycle.")
+                        time.sleep(5.0)
+                        continue
 
                 # A. Position & Trade Synchronization
                 self._sync_positions_with_db()
