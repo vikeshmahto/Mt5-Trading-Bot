@@ -1,0 +1,11 @@
+fastapi==0.110.0
+uvicorn[standard]==0.29.0
+sqlalchemy==2.0.29
+pydantic==2.6.4
+pydantic-settings==2.2.1
+MetaTrader5==5.0.45
+pandas==2.2.1
+pandas-ta==0.3.14b0
+python-dotenv==1.0.1
+apscheduler==3.10.4
+websockets==12.0
