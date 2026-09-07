@@ -1,48 +1,36 @@
 import { Trade, Position, SystemStatus, Candle, Zone } from "./types";
-import { mockTrades, mockPositions, mockSystemStatus, generateCandles, mockZones } from "./mockData";
 
-// Simulate network latency
-const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+const API_BASE = "http://localhost:8000/api";
 
 export const fetchSystemStatus = async (): Promise<SystemStatus> => {
-  await delay(400);
-  return mockSystemStatus;
+  const res = await fetch(`${API_BASE}/status`);
+  if (!res.ok) throw new Error("Failed to fetch system status");
+  return res.json();
 };
 
 export const fetchPositions = async (): Promise<Position[]> => {
-  await delay(500);
-  return mockPositions; // Note: In the real app, this might just initialize the store, and WS handles updates
+  const res = await fetch(`${API_BASE}/positions`);
+  if (!res.ok) throw new Error("Failed to fetch positions");
+  return res.json();
 };
 
 export const fetchTrades = async (): Promise<Trade[]> => {
-  await delay(600);
-  return mockTrades;
+  const res = await fetch(`${API_BASE}/trades`);
+  if (!res.ok) throw new Error("Failed to fetch trades");
+  return res.json();
 };
 
 export const fetchChartData = async (symbol: string, timeframe: string): Promise<{ candles: Candle[], zones: Zone[] }> => {
-  await delay(800);
-  // In mock, we ignore symbol/timeframe and just return new generated data so the chart updates
-  const candles = generateCandles(200, 2000);
+  const [candlesRes, zonesRes] = await Promise.all([
+    fetch(`${API_BASE}/chart?symbol=${symbol}&timeframe=${timeframe}&num_bars=200`),
+    fetch(`${API_BASE}/zones?symbol=${symbol}&timeframe=${timeframe}`)
+  ]);
   
-  // Create some zones relative to the newly generated candles
-  const zones: Zone[] = [
-    {
-      type: "orderblock",
-      startTime: candles[candles.length - 50].time,
-      endTime: candles[candles.length - 30].time,
-      priceHigh: candles[candles.length - 40].high,
-      priceLow: candles[candles.length - 40].low,
-      timeframe
-    },
-    {
-      type: "fvg",
-      startTime: candles[candles.length - 20].time,
-      endTime: candles[candles.length - 5].time,
-      priceHigh: candles[candles.length - 15].high,
-      priceLow: candles[candles.length - 15].low,
-      timeframe
-    }
-  ];
+  if (!candlesRes.ok) throw new Error("Failed to fetch candles");
+  if (!zonesRes.ok) throw new Error("Failed to fetch zones");
+  
+  const candles = await candlesRes.json();
+  const zones = await zonesRes.json();
   
   return { candles, zones };
 };

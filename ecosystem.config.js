@@ -14,8 +14,9 @@ module.exports = {
     },
     {
       name: "dashboard-backend",
-      script: "dashboard_backend/main.py",
+      script: "uvicorn",
       interpreter: "python",
+      args: "backend.app.main:app --host 0.0.0.0 --port 8000 --reload",
       watch: false,
       max_restarts: 10,
       restart_delay: 5000,

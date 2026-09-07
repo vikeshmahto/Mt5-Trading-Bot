@@ -26,15 +26,17 @@ function App() {
           <AnalyticsPanel />
         </div>
         
-        {/* Bottom Row: Journal, Risk Config, Logs */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 xl:grid-cols-4 gap-6 min-h-[400px]">
-          <div className="col-span-1 lg:col-span-2 xl:col-span-2 h-[500px] lg:h-auto">
-            <JournalTable />
-          </div>
-          <div className="col-span-1 h-[500px] lg:h-auto">
+        {/* Journal Full Width Row */}
+        <div className="w-full min-h-[500px]">
+          <JournalTable />
+        </div>
+
+        {/* Bottom Row: Risk Config, Logs */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 min-h-[400px]">
+          <div className="col-span-1 h-[400px] lg:h-auto">
             <RiskConfigPanel />
           </div>
-          <div className="col-span-1 h-[500px] lg:h-auto">
+          <div className="col-span-1 h-[400px] lg:h-auto">
             <LiveLogFeed />
           </div>
         </div>
