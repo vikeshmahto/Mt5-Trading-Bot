@@ -1,10 +1,35 @@
-import { useSystemStore } from "@/store/useSystemStore";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { fetchSystemStatus, pauseBot, resumeBot } from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Play, Pause, Activity, Globe } from "lucide-react";
+import { toast } from "sonner";
 
 export function StatusBar() {
-  const { status, toggleBot } = useSystemStore();
+  const queryClient = useQueryClient();
+
+  const { data: status = { botStatus: "running", mt5Connected: false, regime: "ranging" } } = useQuery({
+    queryKey: ["systemStatus"],
+    queryFn: fetchSystemStatus,
+    refetchInterval: 3000,
+  });
+
+  const toggleMutation = useMutation({
+    mutationFn: async () => {
+      if (status.botStatus === "running") {
+        return await pauseBot();
+      } else {
+        return await resumeBot();
+      }
+    },
+    onSuccess: (res) => {
+      queryClient.invalidateQueries({ queryKey: ["systemStatus"] });
+      toast.info(`Bot is now ${res.botStatus}`);
+    },
+    onError: (err: any) => {
+      toast.error(`Action failed: ${err.message}`);
+    }
+  });
 
   const getDotColor = () => {
     switch (status.botStatus) {
@@ -13,6 +38,7 @@ export function StatusBar() {
       case "paused":
         return "bg-yellow-500";
       case "stopped":
+      default:
         return "bg-red-500";
     }
   };
@@ -48,7 +74,8 @@ export function StatusBar() {
         <Button 
           variant={status.botStatus === "running" ? "outline" : "default"} 
           size="sm" 
-          onClick={toggleBot}
+          disabled={toggleMutation.isPending}
+          onClick={() => toggleMutation.mutate()}
           className="gap-2"
         >
           {status.botStatus === "running" ? (
@@ -65,3 +92,4 @@ export function StatusBar() {
     </div>
   );
 }
+

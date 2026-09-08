@@ -29,11 +29,12 @@ def place_order(symbol: str, direction: str, volume: float, entry_price: float, 
                 tp=tp,
                 setup_type=setup_type,
                 session=session,
-                opened_at=datetime.utcnow()
+                opened_at=datetime.utcnow(),
+                source="paper"
             )
             db.add(trade)
             db.commit()
-            log_system_event('success', f"[DRY RUN] Simulated order {trade_id} logged to DB.")
+            log_system_event('success', f"[DRY RUN] Simulated order {trade_id} logged to DB as paper trade.")
         except Exception as e:
             log_system_event('error', f"Failed to log dry-run trade: {e}")
         finally:
@@ -81,7 +82,8 @@ def place_order(symbol: str, direction: str, volume: float, entry_price: float, 
                 tp=tp,
                 setup_type=setup_type,
                 session=session,
-                opened_at=datetime.utcnow()
+                opened_at=datetime.utcnow(),
+                source="live"
             )
             db.add(trade)
             db.commit()

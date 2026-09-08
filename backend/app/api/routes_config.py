@@ -12,6 +12,7 @@ class ConfigUpdate(BaseModel):
     riskPerTrade: Optional[float] = None
     dailyCircuitBreaker: Optional[bool] = None
     maxDailyLoss: Optional[float] = None
+    paperTradingStartDate: Optional[str] = None
     setupObFvg: Optional[bool] = None
     setupLiquiditySweep: Optional[bool] = None
     setupBosBreakout: Optional[bool] = None
@@ -34,6 +35,7 @@ def get_config(db: Session = Depends(get_db)):
         "riskPerTrade": config.risk_per_trade,
         "dailyCircuitBreaker": config.daily_circuit_breaker,
         "maxDailyLoss": config.max_daily_loss,
+        "paperTradingStartDate": getattr(config, "paper_trading_start_date", "2026-09-08T17:30:00Z"),
         "activeSetups": {
             "OB+FVG confluence": config.setup_ob_fvg,
             "Liquidity Sweep": config.setup_liquidity_sweep,

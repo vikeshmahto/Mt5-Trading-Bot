@@ -1,12 +1,32 @@
 import { useState, useMemo } from "react";
-import { useSystemStore } from "@/store/useSystemStore";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { fetchPositions, closePosition } from "@/lib/api";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { XCircle, ArrowUpDown } from "lucide-react";
+import { XCircle, ArrowUpDown, Loader2 } from "lucide-react";
+import { toast } from "sonner";
 
 export function PositionsPanel() {
-  const { positions, closePosition } = useSystemStore();
+  const queryClient = useQueryClient();
+
+  const { data: positions = [], isLoading } = useQuery({
+    queryKey: ["positions"],
+    queryFn: fetchPositions,
+    refetchInterval: 2000,
+  });
+
+  const closeMutation = useMutation({
+    mutationFn: (id: string) => closePosition(id),
+    onSuccess: (_, id) => {
+      queryClient.invalidateQueries({ queryKey: ["positions"] });
+      queryClient.invalidateQueries({ queryKey: ["trades"] });
+      toast.success(`Position ${id} closed`);
+    },
+    onError: (err: any) => {
+      toast.error(`Failed to close position: ${err.message}`);
+    }
+  });
   
   const [sortField, setSortField] = useState<"symbol" | "direction" | "entryPrice" | "currentPrice" | "floatingPnl">("floatingPnl");
   const [sortDesc, setSortDesc] = useState(true);
@@ -54,7 +74,12 @@ export function PositionsPanel() {
         </div>
       </CardHeader>
       <CardContent className="flex-1 overflow-auto p-0">
-        {positions.length === 0 ? (
+        {isLoading && positions.length === 0 ? (
+          <div className="flex flex-col items-center justify-center h-full p-12 text-muted-foreground">
+            <Loader2 className="h-6 w-6 animate-spin mb-2 opacity-40" />
+            <p className="text-sm">Loading positions…</p>
+          </div>
+        ) : positions.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-full p-12 text-muted-foreground">
             <XCircle className="h-10 w-10 mb-2 opacity-20" />
             <p>No open positions</p>
@@ -97,18 +122,19 @@ export function PositionsPanel() {
                       {pos.direction}
                     </span>
                   </TableCell>
-                  <TableCell className="text-right font-mono text-muted-foreground">{pos.entryPrice}</TableCell>
-                  <TableCell className="text-right font-mono text-muted-foreground">{pos.currentPrice}</TableCell>
+                  <TableCell className="text-right font-mono text-muted-foreground">{pos.entryPrice.toFixed(2)}</TableCell>
+                  <TableCell className="text-right font-mono text-muted-foreground">{pos.currentPrice.toFixed(2)}</TableCell>
                   <TableCell className={`text-right font-mono font-bold ${
                     pos.floatingPnl >= 0 ? 'text-green-500' : 'text-red-500'
                   }`}>
-                    {pos.floatingPnl >= 0 ? '+' : ''}{pos.floatingPnl}
+                    {pos.floatingPnl >= 0 ? '+' : ''}{pos.floatingPnl.toFixed(2)}
                   </TableCell>
                   <TableCell className="text-right">
                     <Button 
                       variant="ghost" 
                       size="sm" 
-                      onClick={() => closePosition(pos.id)}
+                      disabled={closeMutation.isPending}
+                      onClick={() => closeMutation.mutate(pos.id)}
                       className="h-8 px-3 text-muted-foreground hover:text-destructive hover:bg-destructive/10"
                     >
                       Close
@@ -123,3 +149,4 @@ export function PositionsPanel() {
     </Card>
   );
 }
+

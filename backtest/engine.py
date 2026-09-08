@@ -464,8 +464,11 @@ class BacktestEngine:
         """
         sliced: dict[str, pd.DataFrame] = {}
         for tf, df in self._all_bars.items():
-            mask = df.index <= current_ts
-            sliced[tf] = df[mask].copy()
+            if not df.empty:
+                idx = df.index.searchsorted(current_ts, side="right")
+                sliced[tf] = df.iloc[:idx]
+            else:
+                sliced[tf] = df
 
         # Simulate M1 trigger using last 3 execution TF bars if M1 is absent or empty
         exec_slice = sliced.get(self.EXEC_TF, pd.DataFrame())

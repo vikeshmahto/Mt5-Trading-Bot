@@ -359,6 +359,7 @@ def generate_signal(
     # ── Build notes ───────────────────────────────────────────────────────────
     ct_tag = " [COUNTER-TREND]" if is_counter_trend else ""
     notes = (
+        f"Regime={regime_report.composite_regime.value} | "
         f"Bias: D1={d1_bias.value} H4={h4_bias.value} H1={h1_bias.value}{ct_tag} | "
         f"Type={sig_type.value} | TF={setup_tf} | "
         f"OB={setup_ob is not None} FVG={setup_fvg is not None} "

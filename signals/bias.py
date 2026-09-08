@@ -258,7 +258,7 @@ def compute_bias(
     )
 
 
-# ── Multi-TF convenience wrapper ──────────────────────────────────────────────
+_BIAS_CACHE: dict[tuple, BiasResult] = {}
 
 def get_multi_tf_bias(
     bars_dict: dict[str, pd.DataFrame],
@@ -268,17 +268,7 @@ def get_multi_tf_bias(
     min_swings: int = DEFAULT_MIN_SWINGS,
 ) -> dict[str, BiasResult]:
     """
-    Compute bias for each timeframe in bars_dict.
-
-    Args:
-        bars_dict:   dict[tf_str → DataFrame] from fetcher.fetch_multi()
-        timeframes:  Subset of keys to analyse. Defaults to all keys.
-        n_left:      Swing left bars.
-        n_right:     Swing right bars.
-        min_swings:  Min required swings per direction.
-
-    Returns:
-        dict[tf_str → BiasResult]
+    Compute bias for each timeframe in bars_dict (cached by timeframe & last bar timestamp).
     """
     tfs = timeframes or list(bars_dict.keys())
     results: dict[str, BiasResult] = {}
@@ -292,8 +282,17 @@ def get_multi_tf_bias(
                 notes="Empty DataFrame",
             )
             continue
-        results[tf] = compute_bias(df, timeframe=tf, n_left=n_left,
-                                   n_right=n_right, min_swings=min_swings)
+        
+        last_ts = df.index[-1]
+        cache_key = (tf, last_ts, len(df), n_left, n_right)
+        if cache_key in _BIAS_CACHE:
+            results[tf] = _BIAS_CACHE[cache_key]
+        else:
+            res = compute_bias(df, timeframe=tf, n_left=n_left, n_right=n_right, min_swings=min_swings)
+            if len(_BIAS_CACHE) > 5000:
+                _BIAS_CACHE.clear()
+            _BIAS_CACHE[cache_key] = res
+            results[tf] = res
 
     return results
 

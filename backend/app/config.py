@@ -7,7 +7,7 @@ class Settings(BaseSettings):
     MT5_SERVER: str = ""
     MT5_PATH: str = "C:\\Program Files\\MetaTrader 5\\terminal64.exe"
     
-    SYMBOLS: str = "XAUUSD,BTCUSD"
+    SYMBOLS: str = "XAUUSD"
     DRY_RUN: bool = True
     
     DATABASE_URL: str = "sqlite:///./trading_bot.db"

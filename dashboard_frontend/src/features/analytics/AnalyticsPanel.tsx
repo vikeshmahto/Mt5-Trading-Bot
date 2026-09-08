@@ -12,7 +12,18 @@ export function AnalyticsPanel() {
   });
 
   const { metrics, equityCurve, winRateBySetup } = useMemo(() => {
-    if (!trades.length) return { metrics: null, equityCurve: [], winRateBySetup: [] };
+    if (!trades.length) {
+      return {
+        metrics: {
+          winRate: "0.0",
+          totalTrades: 0,
+          avgR: "0.00",
+          equity: "10000.00"
+        },
+        equityCurve: [],
+        winRateBySetup: []
+      };
+    }
     
     let totalWins = 0;
     let totalR = 0;
@@ -56,9 +67,10 @@ export function AnalyticsPanel() {
     };
   }, [trades]);
 
-  if (isLoading || !metrics) {
+  if (isLoading) {
     return <Card className="h-full"><CardContent className="flex items-center justify-center p-8">Loading analytics...</CardContent></Card>;
   }
+
 
   return (
     <div className="flex flex-col gap-4 h-full">

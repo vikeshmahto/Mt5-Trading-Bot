@@ -8,15 +8,48 @@ export interface Trade {
   symbol: string;
   direction: Direction;
   entryPrice: number;
-  exitPrice: number;
+  exitPrice?: number | null;
   sl: number;
   tp: number;
-  rMultiple: number;
-  outcome: Outcome;
+  rMultiple?: number | null;
+  outcome?: Outcome | null;
   setupType: string;
   session: Session;
   openedAt: string;
-  closedAt: string;
+  closedAt?: string | null;
+  source?: "paper" | "backtest" | "live" | "manual_note";
+
+  // 1. Context / Bias
+  htfBias?: "bullish" | "bearish" | "range" | null;
+  htfReason?: string | null;
+  biasCorrect?: "yes" | "no" | "partial" | null;
+
+  // 2. Setup
+  setupTimeframe?: string | null;
+  confluence?: string | null;
+  screenshotUrl?: string | null;
+
+  // 3. Execution
+  entryTimeframe?: string | null;
+  entryTrigger?: string | null;
+  slLogic?: string | null;
+  plannedRr?: number | null;
+  riskPct?: number | null;
+
+  // 4. Outcome & Excursion
+  pointsCaptured?: number | null;
+  mae?: number | null;
+  mfe?: number | null;
+
+  // 5. Process / Psychology
+  ruleAdherence?: string | null;
+  emotionalState?: string | null;
+  externalFactor?: string | null;
+
+  // 6. Post-Trade Review & Mistake Taxonomy
+  textbookComparison?: string | null;
+  mistakeType?: string | null;
+  reviewNotes?: string | null;
 }
 
 export interface Position {

@@ -3,10 +3,15 @@ from app.config import settings
 from app.logging_setup import log_system_event
 
 def initialize_mt5() -> bool:
+    if mt5.initialize():
+        log_system_event('success', "MT5 connected successfully")
+        return True
+
     if not mt5.initialize(path=settings.MT5_PATH,
                           login=settings.MT5_LOGIN,
                           server=settings.MT5_SERVER,
-                          password=settings.MT5_PASSWORD):
+                          password=settings.MT5_PASSWORD,
+                          timeout=5000):
         error = mt5.last_error()
         log_system_event('error', f"MT5 initialization failed: {error}")
         return False
@@ -15,7 +20,8 @@ def initialize_mt5() -> bool:
     return True
 
 def check_connection() -> bool:
-    # A simple way to check if we are still connected is to request terminal info
+    if settings.DRY_RUN:
+        return True
     info = mt5.terminal_info()
     if info is None or not info.connected:
         return False

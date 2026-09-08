@@ -14,7 +14,7 @@ import { Button } from "@/components/ui/button";
 
 const TIMEFRAMES = ["M1", "M15", "H1", "H4", "D1"];
 
-export function ChartPanel() {
+export function ChartPanel({ minHeight = 400 }: { minHeight?: number }) {
   const chartContainerRef = useRef<HTMLDivElement>(null);
   const chartRef = useRef<IChartApi | null>(null);
   const seriesRef = useRef<ISeriesApi<"Candlestick"> | null>(null);
@@ -52,7 +52,7 @@ export function ChartPanel() {
         horzLine: { color: "#6b7280" },
       },
       width: chartContainerRef.current.clientWidth,
-      height: chartContainerRef.current.clientHeight || 420,
+      height: chartContainerRef.current.clientHeight || minHeight,
     });
 
     chartRef.current = chart;
@@ -72,7 +72,7 @@ export function ChartPanel() {
       if (chartContainerRef.current && chartRef.current) {
         chartRef.current.applyOptions({
           width: chartContainerRef.current.clientWidth,
-          height: chartContainerRef.current.clientHeight || 420,
+          height: chartContainerRef.current.clientHeight || minHeight,
         });
       }
     };
